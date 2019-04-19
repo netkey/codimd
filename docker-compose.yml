@@ -1,0 +1,16 @@
+version: '3'
+services:
+  database:
+    image: postgres:11.2
+    environment:
+      POSTGRES_USER: hackmd
+      POSTGRES_PASSWORD: hackmdpass
+      POSTGRES_DB: hackmd
+  hackmd:
+    image: codimd:test
+    environment:
+      CMD_DB_URL: postgres://hackmd:hackmdpass@db/hackmd
+    links:
+      - database:db
+    ports:
+      - 3000:3000

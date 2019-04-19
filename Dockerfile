@@ -21,6 +21,9 @@ ARG UID=1500
 ARG GID=1500
 
 RUN set +x -ue && \
+    wget https://github.com/hackmdio/portchecker/releases/download/v1.0.1/portchecker-linux-amd64.tar.gz && \
+    tar xvf portchecker-linux-amd64.tar.gz -C /usr/local/bin && \
+    mv /usr/local/bin/portchecker-linux-amd64 /usr/local/bin/pcheck && \
     # Add user and groupd
     groupadd --gid $GID $USER_NAME && \
     useradd --uid $UID --gid $USER_NAME --no-log-init --create-home $USER_NAME && \
@@ -41,13 +44,13 @@ USER $USER_NAME
 # build project
 WORKDIR /codimd
 
-RUN set +x -ue \
-  && cliVer=$(cat package.json | grep sequelize-cli | awk '{print substr($1, 2, length($1) - 3)"@"substr($2, 2, length($2) - 3)}') \
-  && npm -g install "$cliVer" \
-  && yarn install --production --non-interactive --pure-lockfile \
-  && yarn cache clean
+RUN set +x -ue && \
+    cliVer=$(cat package.json | grep sequelize-cli | awk '{print substr($1, 2, length($1) - 3)"@"substr($2, 2, length($2) - 3)}') && \
+    npm -g install "$cliVer" && \
+    yarn install --production --non-interactive --pure-lockfile && \
+    yarn cache clean
 
-VOLUME public/uploads
+VOLUME /codimd/public/uploads
 EXPOSE 3000
 
-CMD ["npm", "run", "start"]
+ENTRYPOINT ["/codimd/docker-entrypoint.sh"]
