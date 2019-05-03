@@ -568,7 +568,7 @@ describe('realtime', function () {
       })
     })
 
-    ;['cursor focus', 'cursor activity'].forEach( (event) => {
+    ;['cursor focus', 'cursor activity', 'cursor blur'].forEach( (event) => {
       describe(event, function () {
         let cursorFocusFunc
 
@@ -586,7 +586,11 @@ describe('realtime', function () {
           const broadChannelEmitFake = clientSocket.broadcast.to(noteId).emit
           assert(broadChannelEmitFake.calledOnce)
           assert(broadChannelEmitFake.lastCall.args[0] === event)
-          assert.deepStrictEqual(broadChannelEmitFake.lastCall.args[1].cursor, cursorData)
+          if (event === 'cursor blur') {
+            assert(broadChannelEmitFake.lastCall.args[1].id === clientSocket.id)
+          } else {
+            assert.deepStrictEqual(broadChannelEmitFake.lastCall.args[1].cursor, cursorData)
+          }
         })
 
         it('should not broadcast when note not exists', () => {
@@ -604,5 +608,6 @@ describe('realtime', function () {
         })
       })
     })
+
   })
 })
