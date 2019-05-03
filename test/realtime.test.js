@@ -428,7 +428,6 @@ describe('realtime', function () {
       assert(startConnectionStub.calledOnce)
       assert(mockSocket.on.callCount === 11)
     })
-
   })
 
   describe('socket event', function () {
