@@ -483,10 +483,9 @@ describe('realtime', function () {
     })
 
     describe('user status', function () {
-      it('should call emitUserStatus', () => {
+      it('should call emitUserStatus and update user data', () => {
         const userStatusFunc = eventFuncMap.get('user status')
         const emitUserStatusStub = sinon.stub(realtime, 'emitUserStatus')
-        realtime.users[clientSocket.id] = {}
         realtime.notes[noteId] = {}
 
         const userData = {
@@ -496,7 +495,47 @@ describe('realtime', function () {
         userStatusFunc(userData)
         assert(emitUserStatusStub.calledOnce)
         assert.deepStrictEqual(emitUserStatusStub.lastCall.args[0], clientSocket)
+        assert(realtime.users[clientSocket.id].idle === true)
+        assert(realtime.users[clientSocket.id].type === 'xs')
       })
+
+      it('should call emitUserStatus without userdata', () => {
+        const userStatusFunc = eventFuncMap.get('user status')
+        const emitUserStatusStub = sinon.stub(realtime, 'emitUserStatus')
+        realtime.notes[noteId] = {}
+        userStatusFunc()
+        assert(emitUserStatusStub.calledOnce)
+        assert.deepStrictEqual(emitUserStatusStub.lastCall.args[0], clientSocket)
+        assert(realtime.users[clientSocket.id].idle === false)
+        assert(realtime.users[clientSocket.id].type === null)
+      })
+
+      it('should not call emitUserStatus when user not exists', () => {
+        const userStatusFunc = eventFuncMap.get('user status')
+        const emitUserStatusStub = sinon.stub(realtime, 'emitUserStatus')
+        realtime.notes[noteId] = {}
+        delete realtime.users[clientSocket.id]
+        const userData = {
+          idle: true,
+          type: 'xs'
+        }
+        userStatusFunc(userData)
+        assert(emitUserStatusStub.called === false)
+      })
+
+      it('should not call emitUserStatus when note not exists', () => {
+        const userStatusFunc = eventFuncMap.get('user status')
+        const emitUserStatusStub = sinon.stub(realtime, 'emitUserStatus')
+        realtime.notes = {}
+        realtime.users[clientSocket.id] = {}
+        const userData = {
+          idle: true,
+          type: 'xs'
+        }
+        userStatusFunc(userData)
+        assert(emitUserStatusStub.called === false)
+      })
+
     })
 
   })
