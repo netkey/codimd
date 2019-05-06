@@ -279,6 +279,7 @@ function main () {
   function handleTermSignals () {
     logger.info('CodiMD has been killed by signal, try to exit gracefully...')
     realtime.maintenance = true
+    realtime.terminate()
     // disconnect all socket.io clients
     Object.keys(io.sockets.sockets).forEach(function (key) {
       var socket = io.sockets.sockets[key]
