@@ -23,7 +23,7 @@
     "standard": "echo 'standard is no longer being used, use `npm run eslint` instead!' && exit 1",
     "start": "sequelize db:migrate && node app.js",
     "mocha": "mocha --require intelli-espower-loader --exit ./test --recursive",
-    "cov": "nyc --reporter=html mocha --require intelli-espower-loader --exit --recursive ./test",
+    "cov": "nyc mocha --require intelli-espower-loader --exit --recursive ./test",
     "test": "npm run-script eslint && npm run-script jsonlint && npm run-script mocha"
   },
   "dependencies": {
@@ -202,5 +202,13 @@
       "name": "Christoph (Sheogorath) Kern",
       "email": "codimd@sheogorath.shivering-isles.com"
     }
-  ]
+  ],
+  "nyc": {
+    "all": true,
+    "include": [
+      "app.js",
+      "lib/**/*.js"
+    ],
+    "reporter": "lcov"
+  }
 }
