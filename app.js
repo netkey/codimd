@@ -300,6 +300,9 @@ function main () {
         })
       }
     }, 100)
+    setTimeout(() => {
+      process.exit(1)
+    }, 5000)
   }
 
   process.on('SIGINT', handleTermSignals)
